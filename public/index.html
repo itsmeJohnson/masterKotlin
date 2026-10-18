@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Kotlin & Android Mastery Lab — Senior Mobile Software Engineer & AVP Preparation for Tesco Bank, Barclays GSC, and Tier-1 Mobile Assessments." />
+  <meta name="theme-color" content="#0a0e17" />
+  <title>Kotlin & Android Mastery Lab — Tesco Bank / Barclays GSC Preparation</title>
+
+  <!-- Google Fonts: Inter, JetBrains Mono, Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/visualizer.css" />
+  <link rel="stylesheet" href="css/editor.css" />
+</head>
+<body>
+  <div id="app-container">
+    <!-- Top Navigation Header -->
+    <header class="app-header" role="banner">
+      <div class="header-left">
+        <button id="btn-mobile-menu" class="btn btn-icon" aria-label="Toggle Navigation Menu" style="display: none;">
+          ☰
+        </button>
+        <div class="brand-badge" id="brand-home-link" tabindex="0" role="link">
+          <div class="brand-logo-icon">K</div>
+          <div>
+            <span style="font-weight: 800;">Kotlin & Android</span>
+            <span style="color: var(--text-muted); font-weight: 500;">Mastery</span>
+          </div>
+        </div>
+        <span class="brand-subtitle">Tesco Bank / Barclays GSC</span>
+      </div>
+
+      <div class="header-center">
+        <button class="search-trigger-btn" id="btn-open-search" aria-label="Search curriculum">
+          <span>🔍</span>
+          <span>Search concepts & scenarios...</span>
+          <kbd class="kbd-shortcut">⌘K</kbd>
+        </button>
+      </div>
+
+      <div class="header-right">
+        <span class="badge badge-beginner" id="compiler-status-badge" style="cursor: pointer;" title="Compiler Status">
+          Checking kotlinc...
+        </span>
+        <button class="btn btn-icon" id="btn-toggle-theme" aria-label="Toggle Theme Mode" title="Toggle Light/Dark Theme">
+          ☀️
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Application Shell -->
+    <div class="app-shell">
+      <!-- Backdrop for mobile drawer -->
+      <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+      <!-- Curriculum Navigation Sidebar -->
+      <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Curriculum Navigation">
+        <div id="sidebar-container">
+          <!-- Rendered by SidebarComponent -->
+        </div>
+      </aside>
+
+      <!-- Main Learning Stage -->
+      <main class="app-main" id="main-content" role="main">
+        <!-- Tutor Mode Switcher Tabs Bar -->
+        <nav class="mode-bar" aria-label="Tutor Modes">
+          <div class="mode-tabs" role="tablist">
+            <button class="mode-tab-btn active" data-mode="learn" role="tab" aria-selected="true" id="tab-mode-learn">
+              📖 Learn (16-Step Guide)
+            </button>
+            <button class="mode-tab-btn" data-mode="trace" role="tab" aria-selected="false" id="tab-mode-trace">
+              ▶ Trace (Visual Tutor)
+            </button>
+            <button class="mode-tab-btn" data-mode="practise" role="tab" aria-selected="false" id="tab-mode-practise">
+              ✍ Practise (Coding Workspace)
+            </button>
+            <button class="mode-tab-btn" data-mode="review" role="tab" aria-selected="false" id="tab-mode-review">
+              🔍 Review (Anti-Patterns)
+            </button>
+            <button class="mode-tab-btn" data-mode="interview" role="tab" aria-selected="false" id="tab-mode-interview">
+              👔 Interview (Senior / AVP)
+            </button>
+            <button class="mode-tab-btn" data-mode="dashboard" role="tab" aria-selected="false" id="tab-mode-dashboard">
+              📊 Progress Dashboard
+            </button>
+          </div>
+        </nav>
+
+        <!-- Viewport Container (Dynamically rendered depending on active mode) -->
+        <div class="view-viewport" id="view-viewport">
+          <!-- Views rendered dynamically -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Search Modal Dialog Overlay -->
+  <div class="modal-overlay" id="search-modal-overlay" role="dialog" aria-modal="true" aria-label="Search Curriculum">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <strong style="color: var(--text-primary); font-size: 1rem;">Search Curriculum & Banking Scenarios</strong>
+        <button class="btn btn-icon btn-sm" id="btn-modal-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <input
+          type="text"
+          class="modal-search-input"
+          placeholder="Search e.g. 'substring', 'coroutines', 'keystore', 'kadane', 'p1 incident'..."
+          aria-label="Search curriculum input"
+        />
+        <ul class="search-results-list" role="listbox">
+          <!-- Search results populated dynamically -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript App Entrypoint (Native ES Modules) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
