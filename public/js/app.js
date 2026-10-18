@@ -40,14 +40,35 @@ class App {
     });
     this.searchModal.init();
 
-    // Check compiler health
-    ApiClient.checkCompilerStatus().then((info) => {
-      const bannerBadge = document.getElementById('compiler-status-badge');
-      if (bannerBadge) {
-        bannerBadge.textContent = info.available ? `✓ ${info.version}` : '⚠️ Static Review Mode';
-        bannerBadge.title = info.available ? 'Live kotlinc JVM compilation active' : 'kotlinc host compiler offline';
-      }
-    });
+    // Check compiler health and allow custom backend endpoint configuration
+    const bannerBadge = document.getElementById('compiler-status-badge');
+    if (bannerBadge) {
+      const updateBadge = (info) => {
+        const shortVer = (info.version || 'kotlinc').replace(/^info:\s*/, '');
+        bannerBadge.textContent = info.available ? `✓ ${shortVer}` : '⚠️ Static Review Mode';
+        bannerBadge.title = info.available 
+          ? `Live JVM compilation active at: ${info.endpoint || 'same-origin'}. Click to configure backend.` 
+          : 'Static mode (compiler offline). Click to configure live backend runner URL.';
+      };
+
+      ApiClient.checkCompilerStatus().then(updateBadge);
+
+      bannerBadge.addEventListener('click', async () => {
+        const current = ApiClient.getBaseUrl();
+        const next = window.prompt(
+          'Configure Backend Compiler API Endpoint:\n\n' +
+          '• Leave empty for default same-origin / local server\n' +
+          '• Or enter your live Tunnel or Cloud URL (e.g. https://your-server.loca.lt or https://app.onrender.com):',
+          current
+        );
+        if (next !== null) {
+          ApiClient.setBaseUrl(next);
+          bannerBadge.textContent = 'Probing...';
+          const info = await ApiClient.checkCompilerStatus();
+          updateBadge(info);
+        }
+      });
+    }
 
     this.bindHeaderAndModeEvents();
 

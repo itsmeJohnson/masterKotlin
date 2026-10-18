@@ -4,7 +4,18 @@
    ========================================================================== */
 
 export class ApiClient {
-  static baseUrl = '';
+  static getBaseUrl() {
+    return (localStorage.getItem('kotlin_api_endpoint') || '').replace(/\/+$/, '');
+  }
+
+  static setBaseUrl(url) {
+    if (url && url.trim()) {
+      localStorage.setItem('kotlin_api_endpoint', url.trim().replace(/\/+$/, ''));
+    } else {
+      localStorage.removeItem('kotlin_api_endpoint');
+    }
+  }
+
   static compilerInfo = {
     available: false,
     version: 'Probing...',
@@ -15,29 +26,36 @@ export class ApiClient {
    * Probes backend health and kotlinc compiler status
    */
   static async checkCompilerStatus() {
+    const base = this.getBaseUrl();
     try {
-      const res = await fetch(`${this.baseUrl}/api/health`, {
-        headers: { 'Accept': 'application/json' }
+      const res = await fetch(`${base}/api/health`, {
+        headers: { 
+          'Accept': 'application/json',
+          'bypass-tunnel-reminder': '1'
+        }
       });
       if (res.ok) {
         const data = await res.json();
         this.compilerInfo = {
           available: data.kotlincAvailable,
           version: data.kotlincVersion || 'kotlinc',
-          mode: data.kotlincAvailable ? 'Live JVM Compiler' : 'Compiler Offline'
+          mode: data.kotlincAvailable ? 'Live JVM Compiler' : 'Compiler Offline',
+          endpoint: base || 'same-origin'
         };
       } else {
         this.compilerInfo = {
           available: false,
           version: 'Not reachable',
-          mode: 'Static Review Mode'
+          mode: 'Static Review Mode',
+          endpoint: base || 'same-origin'
         };
       }
     } catch (e) {
       this.compilerInfo = {
         available: false,
         version: 'Server Disconnected',
-        mode: 'Client-Side Evaluation Mode'
+        mode: 'Client-Side Evaluation Mode',
+        endpoint: base || 'same-origin'
       };
     }
     return this.compilerInfo;
@@ -47,11 +65,14 @@ export class ApiClient {
    * Executes Kotlin code via the backend kotlinc runner
    */
   static async executeKotlin(code, stdin = '') {
-    // If compiler is known to be available, execute remotely
+    const base = this.getBaseUrl();
     try {
-      const res = await fetch(`${this.baseUrl}/api/run-kotlin`, {
+      const res = await fetch(`${base}/api/run-kotlin`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'bypass-tunnel-reminder': '1'
+        },
         body: JSON.stringify({ code, stdin })
       });
 
