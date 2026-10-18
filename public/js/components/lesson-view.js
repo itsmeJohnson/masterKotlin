@@ -12,6 +12,8 @@ import { CURRICULUM } from '../data/curriculum.js';
 import { AppState } from '../state.js';
 import { highlightKotlin } from '../utils/syntax-highlighter.js';
 
+import { EXERCISES } from '../data/exercises.js';
+
 export class LessonViewComponent {
   constructor(containerEl) {
     this.container = containerEl;
@@ -24,10 +26,109 @@ export class LessonViewComponent {
     if (TESTING_SECURITY_LESSONS[lessonId]) return TESTING_SECURITY_LESSONS[lessonId];
     if (SENIOR_SCENARIOS[lessonId]) return this.convertScenarioToLesson(SENIOR_SCENARIOS[lessonId]);
     
+    // Exercise-based algorithm lesson
+    if (EXERCISES[lessonId]) {
+      const meta = this.findCurriculumItem(lessonId);
+      return this.convertExerciseToLesson(EXERCISES[lessonId], meta);
+    }
+
     // Dynamic generator fallback
     const meta = this.findCurriculumItem(lessonId);
     if (meta) return this.generateDynamicLesson(meta);
     return null;
+  }
+
+  convertExerciseToLesson(ex, meta) {
+    return {
+      id: ex.id,
+      title: ex.title,
+      category: ex.category || meta?.category || 'Algorithms',
+      difficulty: ex.difficulty || meta?.difficulty || 'Medium',
+      timeEstimate: meta?.duration || '25 min',
+      problemId: ex.id,
+      steps: [
+        {
+          stepNumber: 1,
+          title: 'Plain English Problem Statement',
+          content: `<p>${ex.description}</p>`
+        },
+        {
+          stepNumber: 2,
+          title: 'Why Developers Need It & Interview Relevance',
+          content: `<p>A high-frequency algorithmic pattern frequently tested in technical assessments at Barclays GSC, Tesco Bank, and Tier-1 engineering firms to evaluate candidate mastery of <strong>${ex.category}</strong>.</p>`
+        },
+        {
+          stepNumber: 3,
+          title: 'Algorithmic Mental Model & Analogy',
+          content: `<p>Think of ${ex.title} through its core paradigm (${ex.category}): converting brute-force quadratic or exponential search into an optimal, single-pass or logarithmic strategy.</p>`
+        },
+        {
+          stepNumber: 4,
+          title: 'Required Kotlin Idioms & Data Structures',
+          content: `<pre><code class="kotlin">${ex.solution?.code ? ex.solution.code.split('\n').slice(0, 5).join('\n') + '\n    // ...' : '// Standard Kotlin constructs'}</code></pre>`
+        },
+        {
+          stepNumber: 5,
+          title: 'Smallest Working Starter Example',
+          content: `<pre><code class="kotlin">${ex.starterCode}</code></pre>`
+        },
+        {
+          stepNumber: 6,
+          title: 'Step-by-Step Execution Mechanics',
+          content: `<p>${ex.hints[0]?.text || 'Iterative traversal with invariants maintained across each step.'}</p>`
+        },
+        {
+          stepNumber: 7,
+          title: 'Variable & Memory Tracking',
+          content: `<p><strong>Auxiliary Space:</strong> ${ex.solution?.spaceComplexity || 'O(1) memory bounds.'}</p>`
+        },
+        {
+          stepNumber: 8,
+          title: 'Runtime Progression',
+          content: `<p>State transitions maintain correctness at every index without redundant operations.</p>`
+        },
+        {
+          stepNumber: 9,
+          title: 'Conditionals & Loop Guards',
+          content: `<p>${ex.hints[1]?.text || 'Boundary conditions guard against array index out-of-bounds.'}</p>`
+        },
+        {
+          stepNumber: 10,
+          title: 'Sample Input Trace',
+          content: ex.examples.map((eg, i) => `<div class="example-card"><div class="example-label">Example ${i+1}</div><div><strong>Input:</strong> <code>${eg.input}</code></div><div><strong>Output:</strong> <code>${eg.output}</code></div>${eg.explanation ? `<div style="margin-top:4px;">${eg.explanation}</div>` : ''}</div>`).join('')
+        },
+        {
+          stepNumber: 11,
+          title: 'Output Verification & Constraints',
+          content: `<p><strong>Output Format:</strong> ${ex.outputFormat}</p><ul>${ex.constraints.map(c => `<li><code>${c}</code></li>`).join('')}</ul>`
+        },
+        {
+          stepNumber: 12,
+          title: 'Edge Cases & Common Pitfalls',
+          content: `<ul>${(ex.solution?.pitfalls || ['Handling empty or single element input.', 'Boundary index off-by-one errors.']).map(p => `<li>${p}</li>`).join('')}</ul>`
+        },
+        {
+          stepNumber: 13,
+          title: 'Time & Space Complexity Analysis',
+          content: `<div class="alert alert-note"><div><strong>Time:</strong> ${ex.solution?.timeComplexity || 'O(n)'}<br/><strong>Auxiliary Space:</strong> ${ex.solution?.spaceComplexity || 'O(1)'}</div></div>`
+        },
+        {
+          stepNumber: 14,
+          title: 'Interactive Coding Exercise',
+          content: `<p>Practice implementing your solution in the built-in IDE. Click <strong>Solve Coding Exercise</strong> below to open the workspace with live test cases.</p>`
+        },
+        {
+          stepNumber: 15,
+          title: 'Hints & Model Reference Solution',
+          content: `<div class="alert alert-tip"><div><strong>Optimal Reference Solution:</strong></div></div><pre><code class="kotlin">${ex.solution?.code || ex.starterCode}</code></pre>`
+        },
+        {
+          stepNumber: 16,
+          title: 'Assessment Confirmation Problem',
+          content: `<p>Verify understanding by testing edge cases like negative values, empty collections, or duplicate keys in the workspace test runner.</p>`
+        }
+      ]
+    };
   }
 
   convertScenarioToLesson(scenario) {

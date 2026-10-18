@@ -25,14 +25,18 @@ export class WorkspaceViewComponent {
   }
 
   loadForLesson(lessonId) {
-    const lesson = FUNDAMENTAL_LESSONS[lessonId] ||
-                   CURRICULUM_TOPIC_LESSONS[lessonId] ||
-                   ANDROID_LESSONS[lessonId] ||
-                   TESTING_SECURITY_LESSONS[lessonId];
-    if (lesson && lesson.problemId && EXERCISES[lesson.problemId]) {
-      this.currentExerciseId = lesson.problemId;
+    if (EXERCISES[lessonId]) {
+      this.currentExerciseId = lessonId;
     } else {
-      this.currentExerciseId = 'ex-substring-abcba';
+      const lesson = FUNDAMENTAL_LESSONS[lessonId] ||
+                     CURRICULUM_TOPIC_LESSONS[lessonId] ||
+                     ANDROID_LESSONS[lessonId] ||
+                     TESTING_SECURITY_LESSONS[lessonId];
+      if (lesson && lesson.problemId && EXERCISES[lesson.problemId]) {
+        this.currentExerciseId = lesson.problemId;
+      } else {
+        this.currentExerciseId = 'ex-substring-abcba';
+      }
     }
     this.revealedHintIndex = 0;
     this.lastRunResult = null;
@@ -43,6 +47,25 @@ export class WorkspaceViewComponent {
   render() {
     const ex = EXERCISES[this.currentExerciseId] || EXERCISES['ex-substring-abcba'];
     const savedCode = AppState.data.codeDrafts[ex.id] || ex.starterCode;
+
+    // Render exercise picker grouped by category
+    const categoriesMap = {};
+    for (const [id, item] of Object.entries(EXERCISES)) {
+      const cat = item.category || 'Core Algorithms';
+      if (!categoriesMap[cat]) categoriesMap[cat] = [];
+      categoriesMap[cat].push(item);
+    }
+
+    let exerciseSelectHtml = '<select id="select-exercise" class="speed-select" style="width: 100%; padding: 8px 12px; font-weight: 600; font-size: 0.825rem; background: var(--bg-tertiary); border: 1px solid var(--border-medium); border-radius: var(--radius-sm); color: var(--text-primary); cursor: pointer;">';
+    for (const [catName, items] of Object.entries(categoriesMap)) {
+      exerciseSelectHtml += `<optgroup label="${catName} (${items.length} Programs)">`;
+      for (const item of items) {
+        const isSelected = item.id === ex.id ? 'selected' : '';
+        exerciseSelectHtml += `<option value="${item.id}" ${isSelected}>${item.title} [${item.difficulty}]</option>`;
+      }
+      exerciseSelectHtml += `</optgroup>`;
+    }
+    exerciseSelectHtml += '</select>';
 
     // Render examples
     let examplesHtml = '';
@@ -161,6 +184,15 @@ export class WorkspaceViewComponent {
 
         <!-- Left: Problem Details -->
         <div class="problem-panel">
+          <!-- Quick Algorithm Switcher -->
+          <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: var(--space-xs);">
+            <div style="font-size: 0.725rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+              <span>⚡ Algorithm Program Bank</span>
+              <span class="badge badge-bank">${Object.keys(EXERCISES).length} Programs</span>
+            </div>
+            ${exerciseSelectHtml}
+          </div>
+
           <div class="problem-header">
             <div class="problem-meta-row">
               <span class="badge badge-medium">${ex.difficulty}</span>
@@ -290,6 +322,21 @@ export class WorkspaceViewComponent {
   bindEvents(ex) {
     const editor = this.container.querySelector('#code-editor-input');
     const lineNums = this.container.querySelector('#editor-lines');
+
+    // Switch Algorithm Program Dropdown
+    const exerciseSelect = this.container.querySelector('#select-exercise');
+    if (exerciseSelect) {
+      exerciseSelect.addEventListener('change', (e) => {
+        const newExId = e.target.value;
+        if (newExId && EXERCISES[newExId]) {
+          this.currentExerciseId = newExId;
+          this.revealedHintIndex = 0;
+          this.lastRunResult = null;
+          this.testCaseResults = [];
+          this.render();
+        }
+      });
+    }
 
     // Auto update line numbers & save draft on input
     if (editor) {

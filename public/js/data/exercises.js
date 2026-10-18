@@ -4,7 +4,10 @@
    and reference solutions.
    ========================================================================== */
 
+import { ALGORITHM_EXERCISES } from './algorithm-exercises.js';
+
 export const EXERCISES = {
+  ...ALGORITHM_EXERCISES,
   'ex-substring-abcba': {
     id: 'ex-substring-abcba',
     title: 'Longest Substring Without Repeating Characters',
