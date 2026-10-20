@@ -1,9 +1,6 @@
 /* ==========================================================================
-   Three Options Quick Prep Hub View Component
-   Provides instant keyword-filtered access to:
-   1. 🗄️ DBMS & Queries (Top Priority)
-   2. 📝 MCQs & Explanations (All questions with correct answers visible)
-   3. 💻 DSA Programs & Solutions
+   HackerEarth-Exact Three Options View Component
+   Matches the HackerEarth Practice Test UI/UX for Tesco Bank & Barclays GSC
    ========================================================================== */
 
 import {
@@ -23,13 +20,38 @@ export class ThreeOptionsViewComponent {
     this.searchQuery = '';
     this.activeTag = 'All';
     this.toastTimer = null;
+    
+    // Timer state for HackerEarth test simulation (45:00 countdown)
+    this.remainingSeconds = 45 * 60;
+    this.timerInterval = null;
+    this.isTimerPaused = false;
   }
 
   init(tab = 'dbms') {
     this.activeTab = tab;
     this.searchQuery = '';
     this.activeTag = 'All';
+    this.startTimer();
     this.render();
+  }
+
+  startTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = setInterval(() => {
+      if (!this.isTimerPaused && this.remainingSeconds > 0) {
+        this.remainingSeconds--;
+        this.updateTimerDisplay();
+      }
+    }, 1000);
+  }
+
+  updateTimerDisplay() {
+    const el = document.getElementById('he-timer-display');
+    if (el) {
+      const mins = Math.floor(this.remainingSeconds / 60);
+      const secs = this.remainingSeconds % 60;
+      el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
   }
 
   setTab(tab) {
@@ -38,8 +60,6 @@ export class ThreeOptionsViewComponent {
     this.searchQuery = '';
     this.activeTag = 'All';
     this.render();
-    
-    // Smooth scroll to top of viewport
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -54,11 +74,11 @@ export class ThreeOptionsViewComponent {
   }
 
   showToast(message = 'Copied to clipboard!') {
-    let toast = document.getElementById('hub-toast');
+    let toast = document.getElementById('he-toast');
     if (!toast) {
       toast = document.createElement('div');
-      toast.id = 'hub-toast';
-      toast.className = 'hub-toast';
+      toast.id = 'he-toast';
+      toast.className = 'he-toast';
       document.body.appendChild(toast);
     }
     toast.textContent = message;
@@ -74,77 +94,89 @@ export class ThreeOptionsViewComponent {
     const mcqsTotal = getAllMcqs().length;
     const dsaTotal = getAllDsaPrograms().length;
 
+    const mins = Math.floor(this.remainingSeconds / 60);
+    const secs = this.remainingSeconds % 60;
+    const timerStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
     this.container.innerHTML = `
-      <div class="hub-container">
-        <!-- Hero Section with Three Primary Selection Tabs -->
-        <header class="hub-hero">
-          <div class="hub-hero-title">
-            <span>⚡ Tesco Bank & Barclays Assessment Quick Prep</span>
+      <!-- HackerEarth Top Navigation Header -->
+      <header class="he-topbar" role="banner">
+        <div class="he-topbar-left">
+          <div class="he-logo-square">H</div>
+          <div>
+            <div class="he-test-title">TESCO Bank mobile development — Barclays GSC</div>
+            <div class="he-user-email">Assessment Practice Hub • Online</div>
           </div>
-          <div class="hub-hero-subtitle">
-            Instant keyword lookup across high-frequency assessment questions, answers & runnable code.
+        </div>
+
+        <div class="he-topbar-center">
+          <div class="he-timer-box" title="Practice Countdown">
+            <span class="timer-icon">⏱️</span>
+            <span id="he-timer-display">${timerStr}</span>
           </div>
+        </div>
+      </header>
 
-          <!-- The Three Primary Options -->
-          <nav class="hub-segmented-tabs" role="tablist" aria-label="Assessment Quick Prep Modes">
-            <button class="hub-tab-btn priority-dbms ${this.activeTab === 'dbms' ? 'active' : ''}" 
-                    data-hub-tab="dbms" role="tab" aria-selected="${this.activeTab === 'dbms'}">
-              <span class="hub-tab-icon">🗄️</span>
-              <span class="hub-tab-label">DBMS & Queries</span>
-              <span class="hub-tab-count">${dbmsTotal} Queries</span>
-              <span class="hub-priority-pill">★ Most Important</span>
-            </button>
+      <!-- Main Assessment Container -->
+      <main class="he-assessment-container">
+        <!-- HackerEarth Mode Switcher Tabs -->
+        <nav class="he-tabs-wrap" role="tablist" aria-label="Assessment Sections">
+          <button class="he-tab-btn priority-dbms ${this.activeTab === 'dbms' ? 'active' : ''}" 
+                  data-hub-tab="dbms" role="tab" aria-selected="${this.activeTab === 'dbms'}">
+            <span>🗄️</span>
+            <span>DBMS & Queries</span>
+            <span class="tab-badge-pill">${dbmsTotal}</span>
+            <span class="priority-tag">Priority ★</span>
+          </button>
 
-            <button class="hub-tab-btn ${this.activeTab === 'mcqs' ? 'active' : ''}" 
-                    data-hub-tab="mcqs" role="tab" aria-selected="${this.activeTab === 'mcqs'}">
-              <span class="hub-tab-icon">📝</span>
-              <span class="hub-tab-label">MCQs & Answers</span>
-              <span class="hub-tab-count">${mcqsTotal} MCQs</span>
-            </button>
+          <button class="he-tab-btn ${this.activeTab === 'mcqs' ? 'active' : ''}" 
+                  data-hub-tab="mcqs" role="tab" aria-selected="${this.activeTab === 'mcqs'}">
+            <span>📝</span>
+            <span>MCQ Questions</span>
+            <span class="tab-badge-pill">${mcqsTotal}</span>
+          </button>
 
-            <button class="hub-tab-btn ${this.activeTab === 'dsa' ? 'active' : ''}" 
-                    data-hub-tab="dsa" role="tab" aria-selected="${this.activeTab === 'dsa'}">
-              <span class="hub-tab-icon">💻</span>
-              <span class="hub-tab-label">DSA Programs</span>
-              <span class="hub-tab-count">${dsaTotal} Algos</span>
-            </button>
-          </nav>
-        </header>
+          <button class="he-tab-btn ${this.activeTab === 'dsa' ? 'active' : ''}" 
+                  data-hub-tab="dsa" role="tab" aria-selected="${this.activeTab === 'dsa'}">
+            <span>💻</span>
+            <span>Programming (DSA)</span>
+            <span class="tab-badge-pill">${dsaTotal}</span>
+          </button>
+        </nav>
 
-        <!-- Sticky Instant Search Bar & Tag Chips -->
-        <div class="hub-search-bar-wrap">
-          <div class="hub-search-input-box">
+        <!-- Sticky Search & Filter Chips Bar -->
+        <div class="he-filter-bar">
+          <div class="he-search-box">
             <span class="search-icon">🔍</span>
             <input 
               type="text" 
-              id="hub-search-input"
-              class="hub-search-input" 
+              id="he-search-input"
+              class="he-search-input" 
               placeholder="${this.getSearchPlaceholder()}" 
               value="${this.escapeHtml(this.searchQuery)}"
               autocomplete="off"
-              autocorrect="off"
               spellcheck="false"
-              aria-label="Search items"
+              aria-label="Search problems"
             />
-            ${this.searchQuery ? `<button class="hub-search-clear-btn" id="btn-clear-hub-search" title="Clear search">✕</button>` : ''}
+            ${this.searchQuery ? `<button class="he-search-clear" id="btn-clear-he-search" title="Clear">✕</button>` : ''}
           </div>
 
           <!-- Category Tags Filter Chips -->
-          <div class="hub-chips-scroll" role="toolbar" aria-label="Filter category">
+          <div class="he-chips-row" role="toolbar" aria-label="Filter category">
             ${this.renderChips()}
           </div>
 
-          <!-- Meta Count Bar -->
-          <div class="hub-meta-bar" id="hub-meta-bar">
+          <!-- Counter Metadata -->
+          <div class="he-meta-counter" id="he-meta-counter">
             ${this.renderMetaCountHtml()}
           </div>
         </div>
 
-        <!-- Cards Feed Container -->
-        <div class="hub-cards-feed" id="hub-cards-feed">
+        <!-- Problem Cards Feed -->
+        <div class="he-cards-feed" id="he-cards-feed">
           ${this.renderActiveCardsHtml()}
         </div>
-      </div>
+      </main>
     `;
 
     this.bindEvents();
@@ -173,7 +205,7 @@ export class ThreeOptionsViewComponent {
       const isSelected = this.activeTag === tag;
       const isPriority = this.activeTab === 'dbms' && (tag === 'Window Functions' || tag === 'GROUP BY / HAVING');
       return `
-        <button class="hub-filter-chip ${isSelected ? 'active' : ''} ${isPriority && isSelected ? 'priority-chip' : ''}" 
+        <button class="he-chip-btn ${isSelected ? 'active' : ''} ${isPriority && isSelected ? 'priority-chip' : ''}" 
                 data-chip="${this.escapeHtml(tag)}">
           ${this.escapeHtml(tag)}
         </button>
@@ -194,26 +226,25 @@ export class ThreeOptionsViewComponent {
     const filtered = this.getActiveItems();
     const count = filtered.length;
     let label = '';
-    if (this.activeTab === 'dbms') label = 'DBMS & Room Queries';
-    else if (this.activeTab === 'mcqs') label = 'MCQs with Verified Answers';
-    else if (this.activeTab === 'dsa') label = 'DSA Programs & Solutions';
+    if (this.activeTab === 'dbms') label = 'DBMS & SQL Queries';
+    else if (this.activeTab === 'mcqs') label = 'MCQ Questions';
+    else if (this.activeTab === 'dsa') label = 'Programming Challenges';
 
     if (this.searchQuery) {
       return `
-        <span>Showing <strong class="hub-counter-badge">${count}</strong> ${label} matching "<em>${this.escapeHtml(this.searchQuery)}</em>"</span>
-        ${count > 0 ? `<span style="font-size: 0.75rem; color: #10b981;">✓ Live Filter Active</span>` : ''}
+        <span>Showing <strong style="color: #ffffff;">${count}</strong> ${label} matching "<em>${this.escapeHtml(this.searchQuery)}</em>"</span>
       `;
     }
 
     if (this.activeTag !== 'All') {
       return `
-        <span>Showing <strong class="hub-counter-badge">${count}</strong> ${label} in <strong>${this.escapeHtml(this.activeTag)}</strong></span>
+        <span>Showing <strong style="color: #ffffff;">${count}</strong> in <strong>${this.escapeHtml(this.activeTag)}</strong></span>
       `;
     }
 
     return `
-      <span>Showing all <strong class="hub-counter-badge">${count}</strong> ${label}</span>
-      <span style="font-size: 0.75rem; color: var(--text-muted);">Use search bar for instant lookup</span>
+      <span>Total Available: <strong style="color: #ffffff;">${count}</strong> ${label}</span>
+      <span style="color: var(--he-text-muted);">HackerEarth Testing Format</span>
     `;
   }
 
@@ -222,11 +253,11 @@ export class ThreeOptionsViewComponent {
 
     if (items.length === 0) {
       return `
-        <div class="hub-empty-state">
-          <div class="empty-icon">🔍</div>
-          <h3>No matching ${this.activeTab.toUpperCase()} found</h3>
+        <div style="text-align: center; padding: 3rem 1rem; color: var(--he-text-muted);">
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
+          <h3 style="color: #ffffff; margin-bottom: 0.5rem;">No questions match your filter</h3>
           <p>No results match "<strong>${this.escapeHtml(this.searchQuery)}</strong>" in <strong>${this.escapeHtml(this.activeTag)}</strong>.</p>
-          <button class="btn btn-secondary btn-sm" id="btn-reset-filters" style="margin-top: 12px;">
+          <button class="he-chip-btn" id="btn-reset-filters" style="margin-top: 12px; background: #2b70f0; color: #fff;">
             Reset All Filters
           </button>
         </div>
@@ -245,7 +276,7 @@ export class ThreeOptionsViewComponent {
   }
 
   // ==========================================
-  // DBMS CARD RENDERER
+  // HACKEREARTH DBMS SPLIT CARD
   // ==========================================
   renderDbmsCard(q, index) {
     const primarySolution = q.sampleSolution || '';
@@ -253,205 +284,240 @@ export class ThreeOptionsViewComponent {
     const explanation = q.explanation || {};
 
     return `
-      <article class="hub-item-card" id="dbms-card-${q.id}">
-        <!-- Header -->
-        <div class="hub-card-header">
-          <div class="hub-card-title-group">
-            <span class="hub-card-set-tag">🗄️ Set ${q.setNumber} • ${this.escapeHtml(q.setName)}</span>
-            <h2 class="hub-card-title">${index + 1}. ${this.escapeHtml(q.title)}</h2>
+      <article class="he-problem-card" id="dbms-problem-${q.id}">
+        <!-- HackerEarth Header -->
+        <div class="he-problem-header">
+          <div class="he-problem-header-left">
+            <div class="he-problem-number-badge">${index + 1}</div>
+            <div>
+              <div class="he-problem-title-text">${this.escapeHtml(q.title)}</div>
+              <div style="font-size: 0.775rem; color: var(--he-text-muted);">Set ${q.setNumber} • ${this.escapeHtml(q.setName)}</div>
+            </div>
           </div>
-          <div class="hub-card-badge-row">
-            ${(q.tags || []).map(t => `<span class="badge badge-intermediate">${this.escapeHtml(t)}</span>`).join('')}
+          <div class="he-problem-header-right">
+            <span class="he-badge-tag">SQL Query</span>
+            <span class="he-marks-badge">💎 10.00</span>
           </div>
         </div>
 
-        <!-- Problem Prompt -->
-        <div class="hub-card-prompt">
-          ${q.prompt}
-        </div>
+        <!-- HackerEarth Split View -->
+        <div class="he-split-body">
+          <!-- Left: Question & Schema -->
+          <div class="he-left-pane">
+            <div class="he-section-label">Problem Statement</div>
+            <div class="he-prompt-content">
+              ${q.prompt}
+            </div>
 
-        <!-- Schema Context -->
-        ${q.schemaContext ? `
-          <div class="hub-schema-box">
-            <strong>Table Schema:</strong> ${this.escapeHtml(q.schemaContext)}
-          </div>
-        ` : ''}
-
-        <!-- SQL Solution Code Box -->
-        <div class="hub-code-box">
-          <div class="hub-code-header">
-            <span>SQL Solution (SQLite / Room Standard)</span>
-            <button class="hub-copy-btn" data-copy="${this.escapeAttr(primarySolution)}">
-              <span>📋</span> Copy SQL
-            </button>
-          </div>
-          <pre class="hub-code-content"><code>${this.escapeHtml(primarySolution)}</code></pre>
-        </div>
-
-        <!-- Alternative Solutions if available -->
-        ${alternatives.length > 0 ? `
-          <details style="font-size: 0.85rem; color: var(--text-secondary);">
-            <summary style="cursor: pointer; font-weight: 600; color: #60a5fa; margin-bottom: 6px;">
-              💡 View ${alternatives.length} Alternative Solution${alternatives.length > 1 ? 's' : ''} (Window vs Subquery)
-            </summary>
-            ${alternatives.map((alt, aIdx) => `
-              <div class="hub-code-box" style="margin-top: 6px;">
-                <div class="hub-code-header">
-                  <span>Alternative Approach ${aIdx + 1}</span>
-                  <button class="hub-copy-btn" data-copy="${this.escapeAttr(alt)}">
-                    <span>📋</span> Copy
-                  </button>
-                </div>
-                <pre class="hub-code-content"><code>${this.escapeHtml(alt)}</code></pre>
+            ${q.schemaContext ? `
+              <div class="he-section-label" style="margin-top: 8px;">Database Schema</div>
+              <div class="he-schema-card">
+                <strong>Table:</strong> ${this.escapeHtml(q.schemaContext)}
               </div>
-            `).join('')}
-          </details>
-        ` : ''}
+            ` : ''}
 
-        <!-- Concept Breakdown & Interview Pitfall -->
-        ${explanation && (explanation.keyConcept || explanation.detailed) ? `
-          <div class="hub-explanation-box">
-            <div class="hub-explanation-header">
-              <span>💡 Concept & Architectural Rationale</span>
-            </div>
-            <div class="hub-explanation-body">
-              ${explanation.keyConcept ? `<p><strong>Key Concept:</strong> ${this.escapeHtml(explanation.keyConcept)}</p>` : ''}
-              ${explanation.detailed ? `<div>${explanation.detailed}</div>` : ''}
-              ${explanation.realWorldPitfall ? `
-                <div class="hub-pitfall-box" style="margin-top: 8px;">
-                  <strong>⚠️ Interview Pitfall / Gotcha:</strong> ${this.escapeHtml(explanation.realWorldPitfall)}
+            <!-- Explanation & Rationale -->
+            ${explanation && (explanation.keyConcept || explanation.detailed) ? `
+              <div class="he-explanation-card" style="margin-top: 10px;">
+                <div class="he-explanation-title">💡 Concept & Strategy</div>
+                <div class="he-explanation-text">
+                  ${explanation.keyConcept ? `<p><strong>Key Concept:</strong> ${this.escapeHtml(explanation.keyConcept)}</p>` : ''}
+                  ${explanation.detailed ? `<div>${explanation.detailed}</div>` : ''}
+                  ${explanation.realWorldPitfall ? `
+                    <div class="he-pitfall-alert" style="margin-top: 6px;">
+                      <strong>⚠️ Interview Pitfall:</strong> ${this.escapeHtml(explanation.realWorldPitfall)}
+                    </div>
+                  ` : ''}
                 </div>
-              ` : ''}
-            </div>
+              </div>
+            ` : ''}
           </div>
-        ` : ''}
+
+          <!-- Right: Code Editor Box -->
+          <div class="he-right-pane">
+            <div class="he-editor-window">
+              <div class="he-editor-topbar">
+                <span class="he-lang-tag">SQLite (3.25+) / Android Room</span>
+                <button class="he-copy-action-btn" data-copy="${this.escapeAttr(primarySolution)}">
+                  <span>📋</span> Copy SQL
+                </button>
+              </div>
+              <pre class="he-code-display"><code>${this.escapeHtml(primarySolution)}</code></pre>
+            </div>
+
+            <!-- Alternative Solutions -->
+            ${alternatives.length > 0 ? `
+              <details style="font-size: 0.85rem; color: var(--he-text-muted);">
+                <summary style="cursor: pointer; font-weight: 700; color: #60a5fa; margin-bottom: 6px;">
+                  💡 View ${alternatives.length} Alternative Solution${alternatives.length > 1 ? 's' : ''} (Window vs Subquery)
+                </summary>
+                ${alternatives.map((alt, aIdx) => `
+                  <div class="he-editor-window" style="margin-top: 6px;">
+                    <div class="he-editor-topbar">
+                      <span>Approach ${aIdx + 1}</span>
+                      <button class="he-copy-action-btn" data-copy="${this.escapeAttr(alt)}">
+                        <span>📋</span> Copy
+                      </button>
+                    </div>
+                    <pre class="he-code-display"><code>${this.escapeHtml(alt)}</code></pre>
+                  </div>
+                `).join('')}
+              </details>
+            ` : ''}
+          </div>
+        </div>
       </article>
     `;
   }
 
   // ==========================================
-  // MCQ CARD RENDERER
+  // HACKEREARTH MCQ SPLIT CARD
   // ==========================================
   renderMcqCard(q, index) {
     const explanation = q.explanation || {};
 
     return `
-      <article class="hub-item-card" id="mcq-card-${q.id}">
+      <article class="he-problem-card" id="mcq-problem-${q.id}">
         <!-- Header -->
-        <div class="hub-card-header">
-          <div class="hub-card-title-group">
-            <span class="hub-card-set-tag">📝 Set ${q.setNumber} • ${this.escapeHtml(q.setName)}</span>
-            <h2 class="hub-card-title">${index + 1}. ${this.escapeHtml(q.title)}</h2>
-          </div>
-          <div class="hub-card-badge-row">
-            ${(q.tags || []).map(t => `<span class="badge badge-beginner">${this.escapeHtml(t)}</span>`).join('')}
-          </div>
-        </div>
-
-        <!-- Question Prompt -->
-        <div class="hub-card-prompt">
-          ${q.prompt}
-        </div>
-
-        <!-- All Options with Correct Answer Highlighted -->
-        <div class="hub-mcq-options-list">
-          ${(q.options || []).map((opt, oIdx) => {
-            const isCorrect = opt.id === q.correctOptionId;
-            const letter = String.fromCharCode(65 + oIdx);
-            return `
-              <div class="hub-mcq-option-item ${isCorrect ? 'is-correct' : ''}">
-                <span class="hub-mcq-option-badge">${letter}</span>
-                <span style="flex: 1;">${this.escapeHtml(opt.text)}</span>
-                ${isCorrect ? `<span class="hub-correct-pill">✓ Correct Answer</span>` : ''}
-              </div>
-            `;
-          }).join('')}
-        </div>
-
-        <!-- In-Depth Explanation -->
-        ${explanation && (explanation.summary || explanation.detailed) ? `
-          <div class="hub-explanation-box">
-            <div class="hub-explanation-header">
-              <span>💡 Why This Is Correct & Key Concept</span>
+        <div class="he-problem-header">
+          <div class="he-problem-header-left">
+            <div class="he-problem-number-badge">${index + 1}</div>
+            <div>
+              <div class="he-problem-title-text">${this.escapeHtml(q.title)}</div>
+              <div style="font-size: 0.775rem; color: var(--he-text-muted);">Set ${q.setNumber} • ${this.escapeHtml(q.setName)}</div>
             </div>
-            <div class="hub-explanation-body">
-              ${explanation.keyConcept ? `<p><strong>Core Concept:</strong> ${this.escapeHtml(explanation.keyConcept)}</p>` : ''}
-              ${explanation.summary ? `<p>${this.escapeHtml(explanation.summary)}</p>` : ''}
-              ${explanation.detailed ? `<div>${explanation.detailed}</div>` : ''}
-              ${explanation.realWorldPitfall ? `
-                <div class="hub-pitfall-box" style="margin-top: 8px;">
-                  <strong>⚠️ Real-World Pitfall:</strong> ${this.escapeHtml(explanation.realWorldPitfall)}
+          </div>
+          <div class="he-problem-header-right">
+            <span class="he-badge-tag">MCQ</span>
+            <span class="he-marks-badge">💎 2.00</span>
+          </div>
+        </div>
+
+        <!-- HackerEarth Split View -->
+        <div class="he-split-body">
+          <!-- Left: Problem Prompt -->
+          <div class="he-left-pane">
+            <div class="he-section-label">Question</div>
+            <div class="he-prompt-content">
+              ${q.prompt}
+            </div>
+
+            <!-- In-Depth Explanation -->
+            ${explanation && (explanation.summary || explanation.detailed) ? `
+              <div class="he-explanation-card" style="margin-top: auto;">
+                <div class="he-explanation-title">💡 Why This Answer Is Correct</div>
+                <div class="he-explanation-text">
+                  ${explanation.keyConcept ? `<p><strong>Core Concept:</strong> ${this.escapeHtml(explanation.keyConcept)}</p>` : ''}
+                  ${explanation.summary ? `<p>${this.escapeHtml(explanation.summary)}</p>` : ''}
+                  ${explanation.detailed ? `<div>${explanation.detailed}</div>` : ''}
+                  ${explanation.realWorldPitfall ? `
+                    <div class="he-pitfall-alert" style="margin-top: 6px;">
+                      <strong>⚠️ Real-World Pitfall:</strong> ${this.escapeHtml(explanation.realWorldPitfall)}
+                    </div>
+                  ` : ''}
                 </div>
-              ` : ''}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Right: Radio Options matching HackerEarth -->
+          <div class="he-right-pane">
+            <div class="he-mcq-instruction">Select your answer to the problem below</div>
+            <div class="he-mcq-options-container">
+              ${(q.options || []).map((opt) => {
+                const isCorrect = opt.id === q.correctOptionId;
+                return `
+                  <div class="he-mcq-option-card ${isCorrect ? 'is-correct' : ''}">
+                    <div class="he-mcq-radio-circle"></div>
+                    <span style="flex: 1;">${this.escapeHtml(opt.text)}</span>
+                    ${isCorrect ? `<span class="he-correct-badge">✓ Correct Answer</span>` : ''}
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
-        ` : ''}
+        </div>
       </article>
     `;
   }
 
   // ==========================================
-  // DSA CARD RENDERER
+  // HACKEREARTH PROGRAMMING (DSA) CARD
   // ==========================================
   renderDsaCard(p, index) {
     const solutionCode = p.solutionCode || p.starterCode || '';
 
     return `
-      <article class="hub-item-card" id="dsa-card-${p.id}">
+      <article class="he-problem-card" id="dsa-problem-${p.id}">
         <!-- Header -->
-        <div class="hub-card-header">
-          <div class="hub-card-title-group">
-            <span class="hub-card-set-tag">💻 ${this.escapeHtml(p.source || 'DSA Bank')} • ${this.escapeHtml(p.category || 'Algorithm')}</span>
-            <h2 class="hub-card-title">${index + 1}. ${this.escapeHtml(p.title)}</h2>
-          </div>
-          <div class="hub-card-badge-row">
-            <span class="badge ${p.difficulty === 'Easy' ? 'badge-beginner' : p.difficulty === 'Hard' ? 'badge-advanced' : 'badge-intermediate'}">
-              ${this.escapeHtml(p.difficulty || 'Medium')}
-            </span>
-            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
-              ⏱️ ${this.escapeHtml(p.timeComplexity || 'O(N)')}
-            </span>
-            <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa;">
-              📦 ${this.escapeHtml(p.spaceComplexity || 'O(1)')}
-            </span>
-          </div>
-        </div>
-
-        <!-- Problem Description -->
-        <div class="hub-card-prompt">
-          ${p.description}
-        </div>
-
-        <!-- Examples if any -->
-        ${p.examples && p.examples.length > 0 ? `
-          <div style="background: rgba(15, 23, 42, 0.5); padding: 8px 12px; border-radius: 6px; font-size: 0.825rem; color: var(--text-secondary);">
-            <strong>Example 1:</strong> <code>${this.escapeHtml(p.examples[0].input)}</code> ➔ Output: <code>${this.escapeHtml(p.examples[0].output)}</code>
-            ${p.examples[0].explanation ? `<div style="margin-top: 4px; color: var(--text-muted);">${this.escapeHtml(p.examples[0].explanation)}</div>` : ''}
-          </div>
-        ` : ''}
-
-        <!-- Kotlin Solution Code Box -->
-        <div class="hub-code-box">
-          <div class="hub-code-header">
-            <span>Kotlin Reference Solution</span>
-            <button class="hub-copy-btn" data-copy="${this.escapeAttr(solutionCode)}">
-              <span>📋</span> Copy Code
-            </button>
-          </div>
-          <pre class="hub-code-content"><code>${this.escapeHtml(solutionCode)}</code></pre>
-        </div>
-
-        <!-- Explanation & Algorithmic Logic -->
-        ${p.explanation ? `
-          <div class="hub-explanation-box">
-            <div class="hub-explanation-header">
-              <span>💡 Algorithmic Strategy & Complexity</span>
-            </div>
-            <div class="hub-explanation-body">
-              <div>${p.explanation}</div>
+        <div class="he-problem-header">
+          <div class="he-problem-header-left">
+            <div class="he-problem-number-badge">${index + 1}</div>
+            <div>
+              <div class="he-problem-title-text">${this.escapeHtml(p.title)}</div>
+              <div style="font-size: 0.775rem; color: var(--he-text-muted);">${this.escapeHtml(p.source || 'HackerEarth')} • ${this.escapeHtml(p.category || 'Algorithm')}</div>
             </div>
           </div>
-        ` : ''}
+          <div class="he-problem-header-right">
+            <span class="he-badge-tag">${this.escapeHtml(p.difficulty || 'Medium')}</span>
+            <span class="he-marks-badge">💎 20.00</span>
+          </div>
+        </div>
+
+        <!-- HackerEarth Split View -->
+        <div class="he-split-body">
+          <!-- Left: Description, Constraints, Examples -->
+          <div class="he-left-pane">
+            <div class="he-section-label">Problem Statement</div>
+            <div class="he-prompt-content">
+              ${p.description}
+            </div>
+
+            ${p.constraints && p.constraints.length > 0 ? `
+              <div class="he-section-label" style="margin-top: 8px;">Constraints</div>
+              <div style="background: #131417; border: 1px solid var(--he-border); border-radius: 6px; padding: 8px 12px; font-family: var(--he-font-mono); font-size: 0.8rem; color: #94a3b8;">
+                ${p.constraints.map(c => `<div>• ${this.escapeHtml(c)}</div>`).join('')}
+              </div>
+            ` : ''}
+
+            ${p.examples && p.examples.length > 0 ? `
+              <div class="he-section-label" style="margin-top: 8px;">Sample Input & Output</div>
+              <div style="background: #131417; border: 1px solid var(--he-border); border-radius: 6px; padding: 8px 12px; font-size: 0.825rem; color: #d1d5db;">
+                <div><strong>Sample Input:</strong> <code>${this.escapeHtml(p.examples[0].input)}</code></div>
+                <div style="margin-top: 4px;"><strong>Sample Output:</strong> <code>${this.escapeHtml(p.examples[0].output)}</code></div>
+              </div>
+            ` : ''}
+
+            <!-- Complexity -->
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <span class="he-badge-tag" style="color: #34d399; border-color: rgba(16, 185, 129, 0.3);">⏱️ ${this.escapeHtml(p.timeComplexity || 'O(N)')}</span>
+              <span class="he-badge-tag" style="color: #a78bfa; border-color: rgba(139, 92, 246, 0.3);">📦 ${this.escapeHtml(p.spaceComplexity || 'O(1)')}</span>
+            </div>
+          </div>
+
+          <!-- Right: Kotlin Code Editor -->
+          <div class="he-right-pane">
+            <div class="he-editor-window">
+              <div class="he-editor-topbar">
+                <span class="he-lang-tag">Kotlin (1.5.21)</span>
+                <button class="he-copy-action-btn" data-copy="${this.escapeAttr(solutionCode)}">
+                  <span>📋</span> Copy Code
+                </button>
+              </div>
+              <pre class="he-code-display"><code>${this.escapeHtml(solutionCode)}</code></pre>
+            </div>
+
+            <!-- Algorithm Strategy -->
+            ${p.explanation ? `
+              <div class="he-explanation-card">
+                <div class="he-explanation-title">💡 Algorithmic Logic & Walkthrough</div>
+                <div class="he-explanation-text">
+                  <div>${p.explanation}</div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
       </article>
     `;
   }
@@ -460,9 +526,9 @@ export class ThreeOptionsViewComponent {
   // FAST RE-RENDER OF RESULTS & METRICS ONLY
   // ==========================================
   renderResultsOnly() {
-    const feedEl = document.getElementById('hub-cards-feed');
-    const metaEl = document.getElementById('hub-meta-bar');
-    const searchInput = document.getElementById('hub-search-input');
+    const feedEl = document.getElementById('he-cards-feed');
+    const metaEl = document.getElementById('he-meta-counter');
+    const searchInput = document.getElementById('he-search-input');
 
     if (feedEl) {
       feedEl.innerHTML = this.renderActiveCardsHtml();
@@ -471,13 +537,12 @@ export class ThreeOptionsViewComponent {
       metaEl.innerHTML = this.renderMetaCountHtml();
     }
 
-    // Toggle clear search button visibility
-    const searchWrap = this.container.querySelector('.hub-search-input-box');
-    let clearBtn = document.getElementById('btn-clear-hub-search');
+    const searchWrap = this.container.querySelector('.he-search-box');
+    let clearBtn = document.getElementById('btn-clear-he-search');
     if (this.searchQuery && !clearBtn && searchWrap) {
       clearBtn = document.createElement('button');
-      clearBtn.className = 'hub-search-clear-btn';
-      clearBtn.id = 'btn-clear-hub-search';
+      clearBtn.className = 'he-search-clear';
+      clearBtn.id = 'btn-clear-he-search';
       clearBtn.title = 'Clear search';
       clearBtn.textContent = '✕';
       clearBtn.addEventListener('click', () => {
@@ -495,8 +560,8 @@ export class ThreeOptionsViewComponent {
   // EVENT BINDINGS
   // ==========================================
   bindEvents() {
-    // 1. Tab switching
-    this.container.querySelectorAll('.hub-tab-btn').forEach(btn => {
+    // 1. Tab buttons
+    this.container.querySelectorAll('.he-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const tab = e.currentTarget.dataset.hubTab;
         if (tab) {
@@ -506,16 +571,16 @@ export class ThreeOptionsViewComponent {
       });
     });
 
-    // 2. Instant search input with debouncing/live update
-    const searchInput = document.getElementById('hub-search-input');
+    // 2. Search input
+    const searchInput = document.getElementById('he-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this.setSearchQuery(e.target.value);
       });
     }
 
-    // 3. Clear search button
-    const clearBtn = document.getElementById('btn-clear-hub-search');
+    // 3. Clear button
+    const clearBtn = document.getElementById('btn-clear-he-search');
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
         if (searchInput) searchInput.value = '';
@@ -524,11 +589,11 @@ export class ThreeOptionsViewComponent {
       });
     }
 
-    // 4. Category filter chips
-    this.container.querySelectorAll('.hub-filter-chip').forEach(chip => {
+    // 4. Filter chips
+    this.container.querySelectorAll('.he-chip-btn').forEach(chip => {
       chip.addEventListener('click', (e) => {
         const tag = e.currentTarget.dataset.chip;
-        this.container.querySelectorAll('.hub-filter-chip').forEach(c => c.classList.remove('active', 'priority-chip'));
+        this.container.querySelectorAll('.he-chip-btn').forEach(c => c.classList.remove('active', 'priority-chip'));
         e.currentTarget.classList.add('active');
         if (this.activeTab === 'dbms' && (tag === 'Window Functions' || tag === 'GROUP BY / HAVING')) {
           e.currentTarget.classList.add('priority-chip');
@@ -537,9 +602,9 @@ export class ThreeOptionsViewComponent {
       });
     });
 
-    // 5. Global Copy Code/SQL delegation
+    // 5. Copy Buttons
     this.container.addEventListener('click', (e) => {
-      const copyBtn = e.target.closest('.hub-copy-btn');
+      const copyBtn = e.target.closest('.he-copy-action-btn');
       if (copyBtn) {
         const textToCopy = copyBtn.dataset.copy;
         if (textToCopy) {
@@ -566,7 +631,6 @@ export class ThreeOptionsViewComponent {
     });
   }
 
-  // Utilities
   escapeHtml(str) {
     if (!str) return '';
     return String(str)
