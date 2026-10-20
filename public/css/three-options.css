@@ -4,23 +4,51 @@
    ========================================================================== */
 
 /* Full-width distraction-free view matching HackerEarth exact UI */
-body.three-options-active .app-sidebar {
-  display: none !important;
+body.three-options-active {
+  background-color: var(--he-bg-base) !important;
+  color: var(--he-text-primary) !important;
+  overflow: auto !important;
+  min-height: 100vh !important;
 }
-body.three-options-active .app-header {
-  display: none !important;
+
+body.three-options-active #app-container {
+  min-height: 100vh !important;
+  height: auto !important;
+  display: block !important;
 }
-body.three-options-active .mode-bar {
-  display: none !important;
-}
+
 body.three-options-active .app-shell {
-  height: 100vh !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  display: block !important;
+  overflow: visible !important;
 }
+
 body.three-options-active .app-main {
   width: 100% !important;
   max-width: 100% !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  display: block !important;
+  overflow: visible !important;
   background-color: var(--he-bg-base) !important;
 }
+
+body.three-options-active .view-viewport {
+  display: block !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+body.three-options-active .view-viewport > * {
+  flex: none !important;
+  min-height: auto !important;
+}
+
+body.three-options-active .app-sidebar,
+body.three-options-active .app-header,
+body.three-options-active .mode-bar,
 body.three-options-active #btn-mobile-menu {
   display: none !important;
 }

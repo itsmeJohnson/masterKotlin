@@ -99,84 +99,86 @@ export class ThreeOptionsViewComponent {
     const timerStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
     this.container.innerHTML = `
-      <!-- HackerEarth Top Navigation Header -->
-      <header class="he-topbar" role="banner">
-        <div class="he-topbar-left">
-          <div class="he-logo-square">H</div>
-          <div>
-            <div class="he-test-title">TESCO Bank mobile development — Barclays GSC</div>
-            <div class="he-user-email">Assessment Practice Hub • Online</div>
-          </div>
-        </div>
-
-        <div class="he-topbar-center">
-          <div class="he-timer-box" title="Practice Countdown">
-            <span class="timer-icon">⏱️</span>
-            <span id="he-timer-display">${timerStr}</span>
-          </div>
-        </div>
-      </header>
-
-      <!-- Main Assessment Container -->
-      <main class="he-assessment-container">
-        <!-- HackerEarth Mode Switcher Tabs -->
-        <nav class="he-tabs-wrap" role="tablist" aria-label="Assessment Sections">
-          <button class="he-tab-btn priority-dbms ${this.activeTab === 'dbms' ? 'active' : ''}" 
-                  data-hub-tab="dbms" role="tab" aria-selected="${this.activeTab === 'dbms'}">
-            <span>🗄️</span>
-            <span>DBMS & Queries</span>
-            <span class="tab-badge-pill">${dbmsTotal}</span>
-            <span class="priority-tag">Priority ★</span>
-          </button>
-
-          <button class="he-tab-btn ${this.activeTab === 'mcqs' ? 'active' : ''}" 
-                  data-hub-tab="mcqs" role="tab" aria-selected="${this.activeTab === 'mcqs'}">
-            <span>📝</span>
-            <span>MCQ Questions</span>
-            <span class="tab-badge-pill">${mcqsTotal}</span>
-          </button>
-
-          <button class="he-tab-btn ${this.activeTab === 'dsa' ? 'active' : ''}" 
-                  data-hub-tab="dsa" role="tab" aria-selected="${this.activeTab === 'dsa'}">
-            <span>💻</span>
-            <span>Programming (DSA)</span>
-            <span class="tab-badge-pill">${dsaTotal}</span>
-          </button>
-        </nav>
-
-        <!-- Sticky Search & Filter Chips Bar -->
-        <div class="he-filter-bar">
-          <div class="he-search-box">
-            <span class="search-icon">🔍</span>
-            <input 
-              type="text" 
-              id="he-search-input"
-              class="he-search-input" 
-              placeholder="${this.getSearchPlaceholder()}" 
-              value="${this.escapeHtml(this.searchQuery)}"
-              autocomplete="off"
-              spellcheck="false"
-              aria-label="Search problems"
-            />
-            ${this.searchQuery ? `<button class="he-search-clear" id="btn-clear-he-search" title="Clear">✕</button>` : ''}
+      <div class="he-hub-wrapper" style="width: 100%; min-height: 100vh; background-color: var(--he-bg-base); display: flex; flex-direction: column;">
+        <!-- HackerEarth Top Navigation Header -->
+        <header class="he-topbar" role="banner">
+          <div class="he-topbar-left">
+            <div class="he-logo-square">H</div>
+            <div>
+              <div class="he-test-title">TESCO Bank mobile development — Barclays GSC</div>
+              <div class="he-user-email">Assessment Practice Hub • Online</div>
+            </div>
           </div>
 
-          <!-- Category Tags Filter Chips -->
-          <div class="he-chips-row" role="toolbar" aria-label="Filter category">
-            ${this.renderChips()}
+          <div class="he-topbar-center">
+            <div class="he-timer-box" title="Practice Countdown">
+              <span class="timer-icon">⏱️</span>
+              <span id="he-timer-display">${timerStr}</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Assessment Container -->
+        <main class="he-assessment-container">
+          <!-- HackerEarth Mode Switcher Tabs -->
+          <nav class="he-tabs-wrap" role="tablist" aria-label="Assessment Sections">
+            <button class="he-tab-btn priority-dbms ${this.activeTab === 'dbms' ? 'active' : ''}" 
+                    data-hub-tab="dbms" role="tab" aria-selected="${this.activeTab === 'dbms'}">
+              <span>🗄️</span>
+              <span>DBMS & Queries</span>
+              <span class="tab-badge-pill">${dbmsTotal}</span>
+              <span class="priority-tag">Priority ★</span>
+            </button>
+
+            <button class="he-tab-btn ${this.activeTab === 'mcqs' ? 'active' : ''}" 
+                    data-hub-tab="mcqs" role="tab" aria-selected="${this.activeTab === 'mcqs'}">
+              <span>📝</span>
+              <span>MCQ Questions</span>
+              <span class="tab-badge-pill">${mcqsTotal}</span>
+            </button>
+
+            <button class="he-tab-btn ${this.activeTab === 'dsa' ? 'active' : ''}" 
+                    data-hub-tab="dsa" role="tab" aria-selected="${this.activeTab === 'dsa'}">
+              <span>💻</span>
+              <span>Programming (DSA)</span>
+              <span class="tab-badge-pill">${dsaTotal}</span>
+            </button>
+          </nav>
+
+          <!-- Sticky Search & Filter Chips Bar -->
+          <div class="he-filter-bar">
+            <div class="he-search-box">
+              <span class="search-icon">🔍</span>
+              <input 
+                type="text" 
+                id="he-search-input"
+                class="he-search-input" 
+                placeholder="${this.getSearchPlaceholder()}" 
+                value="${this.escapeHtml(this.searchQuery)}"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Search problems"
+              />
+              ${this.searchQuery ? `<button class="he-search-clear" id="btn-clear-he-search" title="Clear">✕</button>` : ''}
+            </div>
+
+            <!-- Category Tags Filter Chips -->
+            <div class="he-chips-row" role="toolbar" aria-label="Filter category">
+              ${this.renderChips()}
+            </div>
+
+            <!-- Counter Metadata -->
+            <div class="he-meta-counter" id="he-meta-counter">
+              ${this.renderMetaCountHtml()}
+            </div>
           </div>
 
-          <!-- Counter Metadata -->
-          <div class="he-meta-counter" id="he-meta-counter">
-            ${this.renderMetaCountHtml()}
+          <!-- Problem Cards Feed -->
+          <div class="he-cards-feed" id="he-cards-feed">
+            ${this.renderActiveCardsHtml()}
           </div>
-        </div>
-
-        <!-- Problem Cards Feed -->
-        <div class="he-cards-feed" id="he-cards-feed">
-          ${this.renderActiveCardsHtml()}
-        </div>
-      </main>
+        </main>
+      </div>
     `;
 
     this.bindEvents();

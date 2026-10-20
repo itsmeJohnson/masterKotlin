@@ -224,7 +224,17 @@ class App {
   }
 }
 
-// Start app on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  App.init();
-});
+// Start app on DOM ready or immediately if already loaded
+function bootApp() {
+  try {
+    App.init();
+  } catch (err) {
+    console.error('[App Boot Error]:', err);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}
