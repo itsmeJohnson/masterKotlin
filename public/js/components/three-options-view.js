@@ -105,7 +105,7 @@ export class ThreeOptionsViewComponent {
     const timerStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
     this.container.innerHTML = `
-      <div class="he-hub-wrapper" style="width: 100%; min-height: 100vh; background-color: var(--he-bg-base); display: flex; flex-direction: column;">
+      <div class="he-hub-wrapper">
         <!-- HackerEarth Top Navigation Header -->
         <header class="he-topbar" role="banner">
           <div class="he-topbar-left">

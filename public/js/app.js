@@ -124,10 +124,12 @@ class App {
 
     // The Three Primary Quick Prep Modes
     if (mode === 'dbms' || mode === 'mcqs' || mode === 'dsa') {
+      document.documentElement.classList.add('three-options-html');
       document.body.classList.add('three-options-active');
       this.threeOptionsView.init(mode);
       return;
     } else {
+      document.documentElement.classList.remove('three-options-html');
       document.body.classList.remove('three-options-active');
     }
 

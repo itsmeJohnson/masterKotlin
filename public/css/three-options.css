@@ -4,46 +4,48 @@
    ========================================================================== */
 
 /* Full-width distraction-free view matching HackerEarth exact UI */
+html.three-options-html {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  min-height: 100% !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
 body.three-options-active {
   background-color: var(--he-bg-base) !important;
   color: var(--he-text-primary) !important;
-  overflow: auto !important;
-  min-height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  min-height: 100% !important;
+  -webkit-overflow-scrolling: touch !important;
+  position: relative !important;
+  width: 100% !important;
 }
 
-body.three-options-active #app-container {
-  min-height: 100vh !important;
-  height: auto !important;
+body.three-options-active #app-container,
+body.three-options-active .app-shell,
+body.three-options-active .app-main,
+body.three-options-active .view-viewport,
+body.three-options-active .he-hub-wrapper {
   display: block !important;
-}
-
-body.three-options-active .app-shell {
   height: auto !important;
-  min-height: 100vh !important;
-  display: block !important;
+  min-height: auto !important;
+  max-height: none !important;
   overflow: visible !important;
-}
-
-body.three-options-active .app-main {
+  position: static !important;
   width: 100% !important;
   max-width: 100% !important;
-  height: auto !important;
-  min-height: 100vh !important;
-  display: block !important;
-  overflow: visible !important;
-  background-color: var(--he-bg-base) !important;
-}
-
-body.three-options-active .view-viewport {
-  display: block !important;
-  height: auto !important;
-  min-height: 100vh !important;
-  overflow: visible !important;
+  box-sizing: border-box !important;
 }
 
 body.three-options-active .view-viewport > * {
   flex: none !important;
   min-height: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 body.three-options-active .app-sidebar,
@@ -1128,24 +1130,199 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Mobile Responsiveness */
+/* Universal Overflow & Constraint Guards */
+.he-assessment-container,
+.he-problem-card,
+.he-split-body,
+.he-workspace-split,
+.he-problem-brief,
+.he-brief-row,
+.he-brief-left,
+.he-brief-right,
+.he-left-pane,
+.he-right-pane,
+.he-solution-pane,
+.he-practice-pane,
+.he-editor-window,
+.he-practice-window,
+.he-textarea-wrap,
+.he-prompt-content,
+.he-explanation-card,
+.he-schema-card {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.he-code-display,
+.he-prompt-content pre,
+.he-editor-window pre,
+.he-terminal-code {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  box-sizing: border-box !important;
+}
+
+.he-code-display code,
+.he-prompt-content pre code,
+.he-terminal-code code {
+  white-space: pre !important;
+  font-family: var(--he-font-mono) !important;
+}
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVENESS (Ensures Full Code Visibility & Native Scroll)
+   ========================================================================== */
 @media (max-width: 768px) {
+  /* Top Bar */
   .he-topbar {
-    padding: 8px 12px;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
+  }
+  .he-topbar-left {
+    gap: 8px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+  }
+  .he-logo-square {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.85rem !important;
+    flex-shrink: 0 !important;
+  }
+  .he-test-title {
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 180px !important;
   }
   .he-user-email {
-    display: none;
+    display: none !important;
   }
+  .he-timer-box {
+    padding: 3px 8px !important;
+    font-size: 0.8rem !important;
+    flex-shrink: 0 !important;
+    gap: 4px !important;
+  }
+
+  /* Three Tabs: Scrollable or compact flex row without breaking out of viewport */
   .he-tabs-wrap {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-    padding: 4px;
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 6px !important;
+    padding: 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .he-tabs-wrap::-webkit-scrollbar {
+    display: none !important;
   }
   .he-tab-btn {
-    padding: 8px 4px;
-    font-size: 0.775rem;
+    flex: 1 0 auto !important;
+    padding: 7px 10px !important;
+    font-size: 0.775rem !important;
+    white-space: nowrap !important;
+    gap: 4px !important;
   }
+  .he-tab-btn .priority-tag {
+    display: none !important;
+  }
+
+  /* Assessment Container & Cards */
   .he-assessment-container {
-    padding: 0.5rem;
+    padding: 6px 6px 4rem 6px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .he-problem-card {
+    border-radius: 6px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .he-problem-header {
+    padding: 8px 10px !important;
+    gap: 6px !important;
+  }
+  .he-problem-title-text {
+    font-size: 0.9rem !important;
+  }
+  .he-problem-number-badge {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.775rem !important;
+  }
+
+  /* Problem Brief & Workspaces Stacked in 1 Column */
+  .he-problem-brief {
+    padding: 10px 10px !important;
+  }
+  .he-brief-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+  .he-workspace-split {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+  }
+  .he-split-body {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+  }
+
+  .he-solution-pane,
+  .he-practice-pane,
+  .he-left-pane,
+  .he-right-pane {
+    padding: 10px !important;
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--he-border) !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Code font and pre styling on mobile */
+  .he-code-display {
+    font-size: 0.775rem !important;
+    padding: 8px 10px !important;
+    line-height: 1.5 !important;
+  }
+  .he-prompt-content pre {
+    font-size: 0.775rem !important;
+    padding: 8px 10px !important;
+  }
+  .he-practice-textarea {
+    min-height: 150px !important;
+    font-size: 0.8rem !important;
+    padding: 8px 10px !important;
+  }
+
+  /* Search & Filter Bar */
+  .he-filter-bar {
+    top: 44px !important;
+    padding: 6px 0 !important;
+  }
+  .he-search-input {
+    font-size: 0.85rem !important;
+    padding: 8px 10px 8px 34px !important;
+  }
+  .he-chip-btn {
+    padding: 4px 10px !important;
+    font-size: 0.75rem !important;
   }
 }
+
