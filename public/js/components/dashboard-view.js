@@ -139,6 +139,25 @@ export class DashboardViewComponent {
           </div>
         </div>
 
+        <!-- HackerEarth Mock Assessment Banner Card -->
+        <div class="lesson-card" style="padding: var(--space-lg); margin-bottom: var(--space-xl); background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(59, 130, 246, 0.12)); border: 1px solid rgba(245, 158, 11, 0.35); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+              <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b;">HackerEarth Assessment Engine</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Timed 60-Min Mock • Live Diagnostics</span>
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">
+              Tesco Bank & Barclays GSC Mock Assessment
+            </h3>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0; max-width: 620px;">
+              Test your readiness across 4 realistic sections: Android & Kotlin engineering diagnostics, DBMS & Room queries with live sandbox, HackerEarth DSA sliding window challenge, and Offline-First Android App Architecture with built-in instant concept explanations.
+            </p>
+          </div>
+          <button class="btn btn-primary" id="btn-dashboard-start-assessment" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; padding: 10px 20px;">
+            ⚡ Launch Mock Assessment
+          </button>
+        </div>
+
         <!-- Two Columns: Weak Topics & Revision Queue -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
           <!-- Weak Topics & Mistake Log -->
@@ -193,6 +212,13 @@ export class DashboardViewComponent {
       continueBtn.addEventListener('click', () => {
         AppState.setLesson('lesson-kotlin-fundamentals-intro');
         AppState.setMode('learn');
+      });
+    }
+
+    const startAssessmentBtn = this.container.querySelector('#btn-dashboard-start-assessment');
+    if (startAssessmentBtn) {
+      startAssessmentBtn.addEventListener('click', () => {
+        AppState.setMode('assessment');
       });
     }
 

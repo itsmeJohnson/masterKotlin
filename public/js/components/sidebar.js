@@ -26,6 +26,15 @@ export class SidebarComponent {
           <span>Solved: <strong class="sidebar-stats-val">${stats.problemsSolved}</strong></span>
         </div>
       </div>
+      <div style="padding: 10px 14px; margin: 8px 12px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(59, 130, 246, 0.15)); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: var(--radius-sm); cursor: pointer;" id="sidebar-launch-assessment" title="Launch HackerEarth-style Mock Assessment">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <strong style="color: #fbbf24; font-size: 0.85rem;">⚡ HackerEarth Mock</strong>
+          <span style="font-size: 0.7rem; background: #f59e0b; color: #000; font-weight: 800; padding: 1px 6px; border-radius: 10px;">TEST</span>
+        </div>
+        <div style="font-size: 0.725rem; color: var(--text-secondary); margin-top: 3px;">
+          Timed Mock • MCQs, DBMS, DSA & Android
+        </div>
+      </div>
       <ul class="curriculum-list">
     `;
 
@@ -70,6 +79,14 @@ export class SidebarComponent {
   }
 
   bindEvents() {
+    // Sidebar assessment banner click
+    const assessmentBanner = this.container.querySelector('#sidebar-launch-assessment');
+    if (assessmentBanner) {
+      assessmentBanner.addEventListener('click', () => {
+        AppState.setMode('assessment');
+      });
+    }
+
     // Collapsible group headers
     this.container.querySelectorAll('.group-header').forEach((header) => {
       header.addEventListener('click', () => {

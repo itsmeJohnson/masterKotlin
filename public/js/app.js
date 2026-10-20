@@ -13,6 +13,7 @@ import { ReviewViewComponent } from './components/review-view.js';
 import { ScenarioViewComponent } from './components/scenario-view.js';
 import { DashboardViewComponent } from './components/dashboard-view.js';
 import { SearchModalComponent } from './components/search-modal.js';
+import { AssessmentViewComponent } from './components/assessment-view.js';
 
 class App {
   static async init() {
@@ -34,6 +35,7 @@ class App {
     this.reviewView = new ReviewViewComponent(viewportEl);
     this.scenarioView = new ScenarioViewComponent(viewportEl);
     this.dashboardView = new DashboardViewComponent(viewportEl);
+    this.assessmentView = new AssessmentViewComponent(viewportEl);
 
     this.searchModal = new SearchModalComponent(searchModalOverlay, (lessonId) => {
       this.handleLessonSelect(lessonId);
@@ -74,7 +76,7 @@ class App {
 
     // Check URL hash for initial mode
     const hash = window.location.hash.replace('#', '').toLowerCase();
-    const validModes = ['learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise'];
+    const validModes = ['learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise', 'assessment'];
     if (hash && validModes.includes(hash)) {
       AppState.data.currentMode = hash;
     }
@@ -139,6 +141,9 @@ class App {
       case 'revise':
         this.dashboardView.render();
         break;
+      case 'assessment':
+        this.assessmentView.init();
+        break;
       default:
         this.lessonView.render(lessonId);
     }
@@ -156,7 +161,7 @@ class App {
     // Support browser back/forward and hash changes
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      const validModes = ['learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise'];
+      const validModes = ['learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise', 'assessment'];
       if (hash && validModes.includes(hash) && AppState.data.currentMode !== hash) {
         AppState.data.currentMode = hash;
         this.renderCurrentView();
