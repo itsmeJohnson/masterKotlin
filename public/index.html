@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="css/visualizer.css" />
   <link rel="stylesheet" href="css/editor.css" />
   <link rel="stylesheet" href="css/assessment.css" />
+  <link rel="stylesheet" href="css/three-options.css" />
 </head>
 <body>
   <div id="app-container">
@@ -70,29 +71,20 @@
 
       <!-- Main Learning Stage -->
       <main class="app-main" id="main-content" role="main">
-        <!-- Tutor Mode Switcher Tabs Bar -->
-        <nav class="mode-bar" aria-label="Tutor Modes">
-          <div class="mode-tabs" role="tablist">
-            <button class="mode-tab-btn active" data-mode="learn" role="tab" aria-selected="true" id="tab-mode-learn">
-              📖 Learn (16-Step Guide)
+        <!-- Primary 3 Options Navigation Bar (Mobile-First) -->
+        <nav class="mode-bar" aria-label="Tesco & Barclays Quick Prep">
+          <div class="mode-tabs mobile-three-tabs" role="tablist">
+            <button class="mode-tab-btn active priority-dbms-tab" data-mode="dbms" role="tab" aria-selected="true" id="tab-mode-dbms" style="color: #fbbf24; border-color: rgba(245, 158, 11, 0.5); font-weight: 700;">
+              🗄️ DBMS & Queries <span style="font-size: 0.65rem; background: #f59e0b; color: #0f172a; padding: 1px 6px; border-radius: 4px; font-weight: 800; margin-left: 4px;">★ TOP PRIORITY</span>
             </button>
-            <button class="mode-tab-btn" data-mode="trace" role="tab" aria-selected="false" id="tab-mode-trace">
-              ▶ Trace (Visual Tutor)
+            <button class="mode-tab-btn" data-mode="mcqs" role="tab" aria-selected="false" id="tab-mode-mcqs" style="font-weight: 600;">
+              📝 MCQs & Answers
             </button>
-            <button class="mode-tab-btn" data-mode="practise" role="tab" aria-selected="false" id="tab-mode-practise">
-              ✍ Practise (Coding Workspace)
+            <button class="mode-tab-btn" data-mode="dsa" role="tab" aria-selected="false" id="tab-mode-dsa" style="font-weight: 600;">
+              💻 DSA Programs
             </button>
-            <button class="mode-tab-btn" data-mode="review" role="tab" aria-selected="false" id="tab-mode-review">
-              🔍 Review (Anti-Patterns)
-            </button>
-            <button class="mode-tab-btn" data-mode="interview" role="tab" aria-selected="false" id="tab-mode-interview">
-              👔 Interview (Senior / AVP)
-            </button>
-            <button class="mode-tab-btn" data-mode="dashboard" role="tab" aria-selected="false" id="tab-mode-dashboard">
-              📊 Progress Dashboard
-            </button>
-            <button class="mode-tab-btn" data-mode="assessment" role="tab" aria-selected="false" id="tab-mode-assessment" style="color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">
-              ⚡ HackerEarth Assessment
+            <button class="mode-tab-btn secondary-mode-tab" data-mode="assessment" role="tab" aria-selected="false" id="tab-mode-assessment" style="color: var(--text-muted); font-size: 0.775rem;">
+              ⚡ Timed Simulation
             </button>
           </div>
         </nav>

@@ -14,6 +14,7 @@ import { ScenarioViewComponent } from './components/scenario-view.js';
 import { DashboardViewComponent } from './components/dashboard-view.js';
 import { SearchModalComponent } from './components/search-modal.js';
 import { AssessmentViewComponent } from './components/assessment-view.js';
+import { ThreeOptionsViewComponent } from './components/three-options-view.js';
 
 class App {
   static async init() {
@@ -29,6 +30,7 @@ class App {
       this.handleLessonSelect(lessonId);
     });
 
+    this.threeOptionsView = new ThreeOptionsViewComponent(viewportEl);
     this.lessonView = new LessonViewComponent(viewportEl);
     this.visualizerView = new VisualizerViewComponent(viewportEl);
     this.workspaceView = new WorkspaceViewComponent(viewportEl);
@@ -76,9 +78,11 @@ class App {
 
     // Check URL hash for initial mode
     const hash = window.location.hash.replace('#', '').toLowerCase();
-    const validModes = ['learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise', 'assessment'];
+    const validModes = ['dbms', 'mcqs', 'dsa', 'assessment', 'learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise'];
     if (hash && validModes.includes(hash)) {
       AppState.data.currentMode = hash;
+    } else {
+      AppState.data.currentMode = 'dbms';
     }
 
     // State changes subscriber
@@ -87,10 +91,7 @@ class App {
       this.renderCurrentView();
     });
 
-    // Boot: Open Initial Lesson required by acceptance criteria:
-    // "Kotlin Fundamentals — Variables, Loops, Conditions and Indexes"
-    AppState.setLesson('lesson-kotlin-fundamentals-intro');
-    this.sidebar.render();
+    // Boot: Start directly with DBMS & Queries (Top Priority)
     this.renderCurrentView();
   }
 
@@ -121,6 +122,15 @@ class App {
       btn.setAttribute('aria-selected', btn.dataset.mode === mode ? 'true' : 'false');
     });
 
+    // The Three Primary Quick Prep Modes
+    if (mode === 'dbms' || mode === 'mcqs' || mode === 'dsa') {
+      document.body.classList.add('three-options-active');
+      this.threeOptionsView.init(mode);
+      return;
+    } else {
+      document.body.classList.remove('three-options-active');
+    }
+
     switch (mode) {
       case 'learn':
         this.lessonView.render(lessonId);
@@ -145,7 +155,7 @@ class App {
         this.assessmentView.init();
         break;
       default:
-        this.lessonView.render(lessonId);
+        this.threeOptionsView.init('dbms');
     }
   }
 
@@ -154,6 +164,7 @@ class App {
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.mode-tab-btn');
       if (btn && btn.dataset.mode) {
+        window.location.hash = `#${btn.dataset.mode}`;
         AppState.setMode(btn.dataset.mode);
       }
     });
@@ -161,7 +172,7 @@ class App {
     // Support browser back/forward and hash changes
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      const validModes = ['learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise', 'assessment'];
+      const validModes = ['dbms', 'mcqs', 'dsa', 'assessment', 'learn', 'trace', 'practise', 'review', 'interview', 'dashboard', 'revise'];
       if (hash && validModes.includes(hash) && AppState.data.currentMode !== hash) {
         AppState.data.currentMode = hash;
         this.renderCurrentView();
@@ -172,8 +183,8 @@ class App {
     const homeLink = document.getElementById('brand-home-link');
     if (homeLink) {
       homeLink.addEventListener('click', () => {
-        AppState.setLesson('lesson-kotlin-fundamentals-intro');
-        AppState.setMode('learn');
+        window.location.hash = '#dbms';
+        AppState.setMode('dbms');
       });
     }
 

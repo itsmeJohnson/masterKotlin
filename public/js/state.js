@@ -11,7 +11,7 @@ export class AppState {
   static data = {
     theme: 'dark',
     currentLessonId: 'lesson-kotlin-fundamentals-intro',
-    currentMode: 'learn', // 'learn', 'trace', 'practise', 'review', 'interview', 'revise'
+    currentMode: 'dbms', // 'dbms', 'mcqs', 'dsa', 'assessment', 'learn', 'trace', 'practise', 'review', 'interview'
     bookmarks: {},
     masteryMap: {}, // lessonId -> 'not_started' | 'learning' | 'practising' | 'needs_revision' | 'mastered'
     stats: {
