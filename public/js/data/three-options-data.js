@@ -67,6 +67,7 @@ export function getAllDbmsQueries() {
           expectedColumns: q.expectedColumns || [],
           expectedOutputPreview: q.expectedOutputPreview || null,
           explanation: q.explanation || null,
+          validationType: q.validationType || '',
           tags: tags,
           type: 'dbms'
         });
@@ -188,7 +189,14 @@ export function getAllDsaPrograms() {
       constraints: algo.constraints || [],
       examples: algo.examples || [],
       starterCode: algo.starterCode || '',
-      solutionCode: (algo.solution && algo.solution.code) || algo.starterCode || '',
+      solutionCode: (() => {
+        let sol = (algo.solution && algo.solution.code) || algo.starterCode || '';
+        if (algo.starterCode && algo.starterCode.includes('fun main(') && !sol.includes('fun main(')) {
+          const match = algo.starterCode.match(/fun\s+main\s*\([^)]*\)\s*\{[\s\S]*$/);
+          if (match) sol = sol.trim() + '\n\n' + match[0].trim();
+        }
+        return sol;
+      })(),
       explanation: (algo.solution && algo.solution.explanation) || (algo.hints && algo.hints.map(h => h.text).join('\n')) || '',
       timeComplexity: algo.timeComplexity || 'O(N)',
       spaceComplexity: algo.spaceComplexity || 'O(1)',
